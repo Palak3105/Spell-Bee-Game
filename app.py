@@ -5,6 +5,34 @@ import requests
 # -------------------------
 # CONFIG
 # -------------------------
+# --- FORCE LIGHT THEME / BLACK TEXT FALLBACK (place near top of app.py) ---
+import streamlit as st
+
+st.markdown(
+    """
+    <style>
+    /* Prefer light color-scheme and force black text; use light-pink background */
+    :root { color-scheme: light; }
+    html, body, .stApp, .main, .block-container {
+        background-color: #ffe6f0 !important;   /* light pink page bg */
+        color: #000000 !important;               /* force black text */
+    }
+    /* Make most text elements black */
+    h1, h2, h3, h4, h5, h6, p, span, label, div, a, li, button, input {
+        color: #000000 !important;
+    }
+    /* Buttons & inputs should have readable text */
+    .stButton>button, button, input, textarea {
+        color: #000000 !important;
+    }
+    /* If any element sets a background color, keep that, otherwise use transparent */
+    * { background-color: transparent !important; }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+# -------------------------------------------------------------------------
+
 WORDS_RAW_URL = "https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.txt"
 LIGHT_PINK = "#ffe6f0"
 DARK_PINK = "#ff1493"
