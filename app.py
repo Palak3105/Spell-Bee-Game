@@ -7,7 +7,6 @@ import requests
 # -------------------------
 st.set_page_config(page_title="Spell Bee", layout="centered")
 
-# Force light theme styles
 st.markdown(
     """
     <style>
@@ -19,28 +18,29 @@ st.markdown(
     h1, h2, h3, h4, h5, h6, p, span, label, div, a, li, button, input {
         color: #000000 !important;
     }
-    /* Default button style for letters */
-    div[data-testid="stButton"] button {
+    .stButton>button {
         height: 80px; 
         width: 80px; 
         border-radius: 50%;
         font-size: 28px; 
         font-weight: bold;
         border: 2px solid #ffb6d5;
-        background-color: white !important;
-        color: black !important;
     }
-    /* Outer letter style */
     .outer-letter {
-        background-color: white !important;
-        border: 2px solid #ffb6d5 !important;
+        background-color: #ffd1e8 !important;
         color: black !important;
     }
-    /* Center letter style */
     .center-letter {
         background-color: #ff1493 !important;
-        border: 2px solid #ffb6d5 !important;
         color: white !important;
+    }
+    /* Make text input white with black text */
+    input[type="text"] {
+        background-color: white !important;
+        color: black !important;
+        border: 2px solid #ffb6d5 !important;
+        border-radius: 8px !important;
+        padding: 8px !important;
     }
     </style>
     """,
@@ -171,9 +171,8 @@ def letter_btn(letter, css_class, key):
     if letter:
         if st.button(letter.upper(), key=key, use_container_width=False):
             append_letter(letter)
-        # Force style for each letter type
         st.markdown(
-            f"<style>div[data-testid='stButton'][key='{key}'] button {{ background-color: {'#ff1493' if css_class=='center-letter' else 'white'} !important; color: {'white' if css_class=='center-letter' else 'black'} !important; }}</style>",
+            f"<style>div[data-testid='stButton'][key='{key}'] button {{ background-color: inherit; }}</style>",
             unsafe_allow_html=True
         )
 
