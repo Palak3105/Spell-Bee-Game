@@ -1,7 +1,8 @@
 ﻿[theme]
-base="light"
-primaryColor="#ff69b4"  # Hot pink
-backgroundColor="#ffe4ec"  # Light pink background
-secondaryBackgroundColor="#ffffff"  # White for buttons/tiles
-textColor="#000000"  # Black text
+base = "light"
+primaryColor = "#ff69b4"  # Hot pink
+backgroundColor = "#ffe4ec"  # Light pink background
+secondaryBackgroundColor = "#ffffff"  # White for buttons/tiles
+textColor = "#000000"  # Black text
+
 

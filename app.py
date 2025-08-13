@@ -7,6 +7,7 @@ import requests
 # -------------------------
 st.set_page_config(page_title="Spell Bee", layout="centered")
 
+# Force light theme styles
 st.markdown(
     """
     <style>
@@ -18,20 +19,27 @@ st.markdown(
     h1, h2, h3, h4, h5, h6, p, span, label, div, a, li, button, input {
         color: #000000 !important;
     }
-    .stButton>button {
+    /* Default button style for letters */
+    div[data-testid="stButton"] button {
         height: 80px; 
         width: 80px; 
         border-radius: 50%;
         font-size: 28px; 
         font-weight: bold;
         border: 2px solid #ffb6d5;
-    }
-    .outer-letter {
-        background-color: #ffd1e8 !important; /* Light pink */
+        background-color: white !important;
         color: black !important;
     }
+    /* Outer letter style */
+    .outer-letter {
+        background-color: white !important;
+        border: 2px solid #ffb6d5 !important;
+        color: black !important;
+    }
+    /* Center letter style */
     .center-letter {
-        background-color: #ff1493 !important; /* Dark pink */
+        background-color: #ff1493 !important;
+        border: 2px solid #ffb6d5 !important;
         color: white !important;
     }
     </style>
@@ -163,8 +171,9 @@ def letter_btn(letter, css_class, key):
     if letter:
         if st.button(letter.upper(), key=key, use_container_width=False):
             append_letter(letter)
+        # Force style for each letter type
         st.markdown(
-            f"<style>div[data-testid='stButton'][key='{key}'] button {{ background-color: inherit; }}</style>",
+            f"<style>div[data-testid='stButton'][key='{key}'] button {{ background-color: {'#ff1493' if css_class=='center-letter' else 'white'} !important; color: {'white' if css_class=='center-letter' else 'black'} !important; }}</style>",
             unsafe_allow_html=True
         )
 
@@ -203,4 +212,5 @@ col1, col2 = st.columns(2)
 if col1.button("Restart Game"): restart()
 if col2.button("Exit"):
     st.session_state.game_over = True
+
 
