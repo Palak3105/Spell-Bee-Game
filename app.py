@@ -15,32 +15,37 @@ st.markdown(
         background-color: #ffe6f0 !important;
         color: #000000 !important;
     }
-    h1, h2, h3, h4, h5, h6, p, span, label, div, a, li, button, input {
+    h1, h2, h3, h4, h5, h6, p, span, label, div, a, li {
         color: #000000 !important;
     }
-    .stButton>button {
-        height: 80px; 
-        width: 80px; 
-        border-radius: 50%;
-        font-size: 28px; 
-        font-weight: bold;
-        border: 2px solid #ffb6d5;
-    }
-    .outer-letter {
-        background-color: #ffd1e8 !important;
-        color: black !important;
-    }
-    .center-letter {
-        background-color: #ff1493 !important;
-        color: white !important;
-    }
-    /* Make text input white with black text */
+
+    /* Make only the text input white */
     input[type="text"] {
         background-color: white !important;
         color: black !important;
         border: 2px solid #ffb6d5 !important;
-        border-radius: 8px !important;
-        padding: 8px !important;
+        border-radius: 5px !important;
+    }
+
+    /* Keep circle button style */
+    .stButton>button {
+        height: 80px; 
+        width: 80px; 
+        border-radius: 50%;
+        font-size: 16px; 
+        font-weight: bold;
+        border: 2px solid #ffb6d5 !important;
+        background-color: #ffffff !important;
+        color: black !important;
+    }
+
+    .outer-letter {
+        background-color: #ffd1e8 !important; /* Light pink */
+        color: black !important;
+    }
+    .center-letter {
+        background-color: #ff1493 !important; /* Dark pink */
+        color: white !important;
     }
     </style>
     """,
