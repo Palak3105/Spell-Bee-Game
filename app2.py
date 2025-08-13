@@ -3,46 +3,51 @@ import random
 import requests
 
 # -------------------------
-# CONFIG
+# CONFIG & THEME
 # -------------------------
-# --- FORCE LIGHT THEME / BLACK TEXT FALLBACK (place near top of app.py) ---
-import streamlit as st
+st.set_page_config(page_title="Spell Bee", layout="centered")
 
 st.markdown(
     """
     <style>
-    /* Prefer light color-scheme and force black text; use light-pink background */
     :root { color-scheme: light; }
     html, body, .stApp, .main, .block-container {
-        background-color: #ffe6f0 !important;   /* light pink page bg */
-        color: #000000 !important;               /* force black text */
+        background-color: #ffe6f0 !important;
+        color: #000000 !important;
     }
-    /* Make most text elements black */
     h1, h2, h3, h4, h5, h6, p, span, label, div, a, li, button, input {
         color: #000000 !important;
     }
-    /* Buttons & inputs should have readable text */
-    .stButton>button, button, input, textarea {
-        color: #000000 !important;
+    .stButton>button {
+        height: 80px; 
+        width: 80px; 
+        border-radius: 50%;
+        font-size: 28px; 
+        font-weight: bold;
+        border: 2px solid #ffb6d5;
     }
-    /* If any element sets a background color, keep that, otherwise use transparent */
-    * { background-color: transparent !important; }
+    .outer-letter {
+        background-color: #ffd1e8 !important; /* Light pink */
+        color: black !important;
+    }
+    .center-letter {
+        background-color: #ff1493 !important; /* Dark pink */
+        color: white !important;
+    }
     </style>
     """,
     unsafe_allow_html=True,
 )
-# -------------------------------------------------------------------------
 
+# -------------------------
+# GAME SETTINGS
+# -------------------------
 WORDS_RAW_URL = "https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.txt"
-LIGHT_PINK = "#ffe6f0"
-DARK_PINK = "#ff1493"
 SCORING = {4: 2, 5: 4, 6: 6, 7: 8}
 MAX_WORDS = 3
 
 def points_for_length(n):
-    if n < 4:
-        return 0
-    return SCORING.get(n, 8)  # 7+ letters = 8 points
+    return 0 if n < 4 else SCORING.get(n, 8)
 
 # -------------------------
 # LOAD WORD LIST
@@ -71,7 +76,6 @@ def find_good_set(word_list):
             if len(valid) >= 10:
                 outer = [l for l in letters if l != center]
                 return letters, center, valid, random.sample(outer, len(outer))
-    # fallback
     letters = list("planetg")
     center = letters[0]
     valid = [w for w in word_list if set(w) <= set(letters) and center in w]
@@ -79,7 +83,7 @@ def find_good_set(word_list):
     return letters, center, valid, random.sample(outer, len(outer))
 
 # -------------------------
-# SESSION INIT
+# INIT GAME
 # -------------------------
 def init_game():
     word_list = load_words()
@@ -98,23 +102,15 @@ if "letters" not in st.session_state:
     init_game()
 
 # -------------------------
-# FUNCTIONS
+# GAME FUNCTIONS
 # -------------------------
-def append_letter(l):
-    st.session_state.current_word += l
-
-def backspace():
-    st.session_state.current_word = st.session_state.current_word[:-1]
-
-def clear_word():
-    st.session_state.current_word = ""
-
+def append_letter(l): st.session_state.current_word += l
+def backspace(): st.session_state.current_word = st.session_state.current_word[:-1]
+def clear_word(): st.session_state.current_word = ""
 def reshuffle():
     outer = [l for l in st.session_state.letters if l != st.session_state.center]
     st.session_state.outer_order = random.sample(outer, len(outer))
-
-def restart():
-    init_game()
+def restart(): init_game()
 
 def submit_word():
     word = st.session_state.current_word.lower()
@@ -138,71 +134,55 @@ def submit_word():
     st.session_state.current_word = ""
 
 # -------------------------
-# STYLING
-# -------------------------
-st.set_page_config(page_title="Spell Bee", layout="centered")
-st.markdown(f"""
-<style>
-.reportview-container, .main, .block-container {{
-    background-color: {LIGHT_PINK};
-}}
-div.stButton > button {{
-    height: 80px; width: 80px; border-radius: 50%;
-    font-size: 28px; font-weight: bold;
-    background-color: #ffd1e8; border: 2px solid #ffb6d5;
-}}
-button[aria-label="{st.session_state.center.upper()}"], button[aria-label="{st.session_state.center.lower()}"] {{
-    background-color: {DARK_PINK} !important;
-    color: white !important;
-}}
-</style>
-""", unsafe_allow_html=True)
-
-# -------------------------
-# HEADER & SCORE
+# HEADER
 # -------------------------
 st.title("✨ Spell Bee")
 st.metric("Score", f"{st.session_state.score} pts")
 
-# Words formed
 st.subheader("Words Formed")
 if st.session_state.words_entered:
     st.write(", ".join(st.session_state.words_entered))
 else:
     st.write("_No words yet_")
-
 for m in st.session_state.messages[-3:]:
     st.info(m)
 
 if st.session_state.game_over:
     st.success(f"Game over! Final score: {st.session_state.score}")
     st.write("Possible words:", ", ".join(st.session_state.valid_words[:20]))
-    if st.button("Restart Game"):
-        restart()
+    if st.button("Restart Game"): restart()
     st.stop()
 
 # -------------------------
-# LETTER LAYOUT
+# HEXAGON LAYOUT
 # -------------------------
 outer = st.session_state.outer_order
 center = st.session_state.center
-row1 = outer[0:3]
-row2 = [outer[5], center, outer[3]]
-row3 = [outer[4], "", ""]
 
-def letter_btn(letter, key):
+def letter_btn(letter, css_class, key):
     if letter:
-        if st.button(letter.upper(), key=key):
+        if st.button(letter.upper(), key=key, use_container_width=False):
             append_letter(letter)
-    else:
-        st.write("")
+        st.markdown(
+            f"<style>div[data-testid='stButton'][key='{key}'] button {{ background-color: inherit; }}</style>",
+            unsafe_allow_html=True
+        )
 
-cols = st.columns(3)
-for i, l in enumerate(row1): letter_btn(l, f"r1_{i}")
-cols = st.columns(3)
-for i, l in enumerate(row2): letter_btn(l, f"r2_{i}")
-cols = st.columns(3)
-for i, l in enumerate(row3): letter_btn(l, f"r3_{i}")
+# Row 1 (top 2)
+cols = st.columns([2,1,1,2])
+with cols[1]: letter_btn(outer[0], "outer-letter", "top_left")
+with cols[2]: letter_btn(outer[1], "outer-letter", "top_right")
+
+# Row 2 (middle upper 3)
+cols = st.columns([1,1,1,1,1])
+with cols[0]: letter_btn(outer[2], "outer-letter", "mid_left")
+with cols[2]: letter_btn(center, "center-letter", "center_btn")
+with cols[4]: letter_btn(outer[3], "outer-letter", "mid_right")
+
+# Row 3 (bottom 2)
+cols = st.columns([2,1,1,2])
+with cols[1]: letter_btn(outer[4], "outer-letter", "bot_left")
+with cols[2]: letter_btn(outer[5], "outer-letter", "bot_right")
 
 # -------------------------
 # WORD INPUT
